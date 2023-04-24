@@ -45,6 +45,7 @@
     ]
   },
   "devDependencies": {
-    "@rtk-query/codegen-openapi": "^1.0.0"
+    "@rtk-query/codegen-openapi": "^1.0.0",
+    "ts-node": "^10.9.1"
   }
 }
