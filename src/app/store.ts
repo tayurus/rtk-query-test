@@ -1,15 +1,40 @@
-import { configureStore, ThunkAction, Action } from "@reduxjs/toolkit";
+import {
+  configureStore,
+  ThunkAction,
+  Action,
+  createEntityAdapter,
+  createSlice,
+} from "@reduxjs/toolkit";
 import counterReducer from "../features/counter/counterSlice";
 import { createLogger } from "redux-logger";
 import { setupListeners } from "@reduxjs/toolkit/query";
 import { winesApi } from "./../services/wine";
-import { petApi } from "./../petApi";
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { GetPostReturnDto, petApi } from "./../petApi";
 
 const loggerMiddleware = createLogger({});
 
+const postsAdapter = createEntityAdapter<GetPostReturnDto>({
+  selectId: (post) => post._id,
+});
+
+const postsSlice = createSlice({
+  initialState: {},
+  reducers: {},
+  name: "posts",
+  extraReducers: (builder) => {
+    builder.addMatcher(
+      petApi.endpoints.postsControllerFindAll.matchFulfilled,
+      (state, action) => {
+        //@ts-ignore
+        postsAdapter.setAll(state, action.payload);
+      }
+    );
+  },
+});
+
 export const store = configureStore({
   reducer: {
+    posts: postsSlice.reducer,
     counter: counterReducer,
     [winesApi.reducerPath]: winesApi.reducer,
     [petApi.reducerPath]: petApi.reducer,
